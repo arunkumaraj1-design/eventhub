@@ -45,7 +45,7 @@
   <div class="endpoint" id="endpoint-title">POST http://127.0.0.1:8000/api/reservations/</div>
   <div class="requestbar"><span class="method">POST　⌄</span><span class="url" id="url">http://127.0.0.1:8000/api/reservations/</span><span class="send">Send　⌄</span></div>
   <div class="tabs"><span>Params</span><span>Authorization</span><span>Headers (8)</span><span class="active">Body　●</span><span>Scripts</span><span>Settings</span></div>
-  <div class="bodytype">◉ raw　　JSON</div>
+  <div class="bodytype" id="bodytype">raw JSON</div>
   <div class="editor"><div class="numbers" id="request-lines"></div><pre id="request-body"></pre></div>
   <div class="response-head"><span class="response-tab">Body</span><span class="small-tab">Cookies</span><span class="small-tab">Headers (10)</span><span class="small-tab">Test Results</span><span class="status ok" id="status">201 Created</span><span class="meta" id="timing">35 ms</span><span class="meta" id="size">169 B</span></div>
   <div class="jsonlabel"><b>{ } JSON</b><span>Preview</span><span>Visualize</span></div>
@@ -54,19 +54,19 @@
 <script>
 const captures = {
   reserve: {
-    title: 'Reserve two seats', url: 'http://127.0.0.1:8000/api/reservations/', status: '201 Created', kind: 'ok', timing: '35 ms', size: '169 B',
-    request: {event:1,attendee_name:'Priya Sharma',attendee_email:'priya@example.com',seats_reserved:2},
-    response: {id:1,event:1,attendee_name:'Priya Sharma',attendee_email:'priya@example.com',seats_reserved:2,status:'confirmed',created_at:'2026-10-24T11:42:58.365703Z'}
+    title: 'Reserve two seats', url: 'http://127.0.0.1:8000/api/reservations/', status: '201 Created', kind: 'ok', timing: '34 ms', size: '160 B',
+    request: {event:2,attendee_name:'Arun',attendee_email:'arun@example.com',seats_reserved:2},
+    response: {id:2,event:2,attendee_name:'Arun',attendee_email:'arun@example.com',seats_reserved:2,status:'confirmed',created_at:'2026-10-24T12:12:15.333978Z'}
   },
   overbook: {
-    title: 'Overbooking fails', url: 'http://127.0.0.1:8000/api/reservations/', status: '400 Bad Request', kind: 'bad', timing: '5 ms', size: '50 B',
-    request: {event:1,attendee_name:'Overbooking Attempt',attendee_email:'overbook@example.com',seats_reserved:2},
+    title: 'Overbooking fails', url: 'http://127.0.0.1:8000/api/reservations/', status: '400 Bad Request', kind: 'bad', timing: '4 ms', size: '50 B',
+    request: {event:2,attendee_name:'Overbooking Attempt',attendee_email:'overbook@example.com',seats_reserved:2},
     response: {non_field_errors:['Only 1 seat(s) available.']}
   },
   cancel: {
-    title: 'Cancel reservation', url: 'http://127.0.0.1:8000/api/reservations/1/cancel/', status: '200 OK', kind: 'ok', timing: '8 ms', size: '169 B',
-    request: {},
-    response: {id:1,event:1,attendee_name:'Priya Sharma',attendee_email:'priya@example.com',seats_reserved:2,status:'cancelled',created_at:'2026-10-24T11:42:58.365703Z'}
+    title: 'Cancel reservation', url: 'http://127.0.0.1:8000/api/reservations/2/cancel/', status: '200 OK', kind: 'ok', timing: '8 ms', size: '160 B',
+    request: null,
+    response: {id:2,event:2,attendee_name:'Arun',attendee_email:'arun@example.com',seats_reserved:2,status:'cancelled',created_at:'2026-10-24T12:12:15.333978Z'}
   }
 };
 function escapeHtml(s) { return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'); }
@@ -83,11 +83,12 @@ document.getElementById('status').textContent = c.status;
 document.getElementById('status').className = 'status ' + c.kind;
 document.getElementById('timing').textContent = c.timing;
 document.getElementById('size').textContent = c.size;
-const requestText = JSON.stringify(c.request, null, 2);
+document.getElementById('bodytype').textContent = c.request === null ? 'No request body' : 'raw JSON';
+const requestText = c.request === null ? '' : JSON.stringify(c.request, null, 2);
 const responseText = JSON.stringify(c.response, null, 2);
-document.getElementById('request-lines').textContent = requestText.split('\n').map((_, i) => i + 1).join('\n');
+document.getElementById('request-lines').textContent = requestText ? requestText.split('\n').map((_, i) => i + 1).join('\n') : '';
 document.getElementById('response-lines').textContent = responseText.split('\n').map((_, i) => i + 1).join('\n');
-document.getElementById('request-body').innerHTML = jsonHtml(c.request);
+document.getElementById('request-body').innerHTML = c.request === null ? '' : jsonHtml(c.request);
 document.getElementById('response-body').innerHTML = jsonHtml(c.response);
 </script>
 </body>

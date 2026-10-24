@@ -88,7 +88,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"event\": {{eventId}},\n  \"attendee_name\": \"Priya Sharma\",\n  \"attendee_email\": \"priya@example.com\",\n  \"seats_reserved\": 2\n}",
+          "raw": "{\n  \"event\": {{eventId}},\n  \"attendee_name\": \"Arun\",\n  \"attendee_email\": \"arun@example.com\",\n  \"seats_reserved\": 2\n}",
           "options": { "raw": { "language": "json" } }
         },
         "url": "{{baseUrl}}/api/reservations/"
