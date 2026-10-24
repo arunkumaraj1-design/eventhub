@@ -1,0 +1,175 @@
+{
+  "info": {
+    "name": "EventHub API",
+    "description": "Event creation, reservation, overbooking, cancellation, and filtering flow.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create event",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.collectionVariables.set('eventTitle', 'EventHub Postman ' + Date.now());"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Event created', function () { pm.response.to.have.status(201); });",
+              "const event = pm.response.json();",
+              "pm.collectionVariables.set('eventId', event.id);",
+              "pm.test('Event starts with three available seats', function () { pm.expect(event.available_seats).to.eql(3); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"{{eventTitle}}\",\n  \"venue\": \"Bengaluru Convention Centre\",\n  \"date\": \"2030-01-01\",\n  \"total_seats\": 3,\n  \"available_seats\": 3,\n  \"status\": \"upcoming\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "{{baseUrl}}/api/events/"
+      }
+    },
+    {
+      "name": "Filter events by status and venue",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Matching event is listed', function () {",
+              "  pm.response.to.have.status(200);",
+              "  const events = pm.response.json();",
+              "  pm.expect(events.some((event) => event.id === Number(pm.collectionVariables.get('eventId')))).to.eql(true);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/events/?status=upcoming&venue=convention"
+      }
+    },
+    {
+      "name": "Reserve two seats",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Reservation created', function () { pm.response.to.have.status(201); });",
+              "const reservation = pm.response.json();",
+              "pm.collectionVariables.set('reservationId', reservation.id);",
+              "pm.test('Reservation is confirmed', function () { pm.expect(reservation.status).to.eql('confirmed'); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"event\": {{eventId}},\n  \"attendee_name\": \"Priya Sharma\",\n  \"attendee_email\": \"priya@example.com\",\n  \"seats_reserved\": 2\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "{{baseUrl}}/api/reservations/"
+      }
+    },
+    {
+      "name": "Filter reservations by event",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Reservation appears in the event filter', function () {",
+              "  pm.response.to.have.status(200);",
+              "  const reservations = pm.response.json();",
+              "  pm.expect(reservations.some((item) => item.id === Number(pm.collectionVariables.get('reservationId')))).to.eql(true);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/reservations/?event_id={{eventId}}"
+      }
+    },
+    {
+      "name": "Overbooking fails",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Overbooking returns 400', function () { pm.response.to.have.status(400); });",
+              "pm.test('Response explains available seats', function () {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.non_field_errors[0]).to.include('Only 1 seat(s) available.');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"event\": {{eventId}},\n  \"attendee_name\": \"Overbooking Attempt\",\n  \"attendee_email\": \"overbook@example.com\",\n  \"seats_reserved\": 2\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "{{baseUrl}}/api/reservations/"
+      }
+    },
+    {
+      "name": "Cancel reservation",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Reservation cancellation succeeds', function () { pm.response.to.have.status(200); });",
+              "pm.test('Reservation status is cancelled', function () { pm.expect(pm.response.json().status).to.eql('cancelled'); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/reservations/{{reservationId}}/cancel/"
+      }
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://127.0.0.1:8000" },
+    { "key": "eventTitle", "value": "" },
+    { "key": "eventId", "value": "" },
+    { "key": "reservationId", "value": "" }
+  ]
+}

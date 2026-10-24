@@ -1,0 +1,8 @@
+.venv/
+venv/
+.edge_capture_profile/
+__pycache__/
+*.py[cod]
+*.log
+db.sqlite3
+.DS_Store

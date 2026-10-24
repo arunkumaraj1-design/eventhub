@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EventHub Postman CLI response capture</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 1380px; height: 920px; overflow: hidden; }
+  body { background: #1f2023; color: #e3e5e8; font: 14px/1.45 Arial, sans-serif; }
+  .topbar { height: 54px; background: #141517; display:flex; align-items:center; padding:0 30px; gap:30px; color:#a7aaaf; border-bottom:1px solid #34363a; }
+  .brand { color:#e9ebee; font-weight:600; letter-spacing:.2px; }
+  .tab { color:#d9dadd; border-bottom:2px solid #f26b4e; height:54px; display:flex; align-items:center; padding:0 18px; }
+  .capture-note { margin-left:auto; color:#858990; font-size:12px; }
+  .page { padding:24px 28px; }
+  .crumb { color:#8b8e95; margin:0 0 14px; font-size:13px; }
+  .endpoint { color:#eceef1; font-size:15px; font-weight:600; margin-bottom:22px; }
+  .requestbar { height:64px; display:flex; align-items:center; border:1px solid #45474d; border-radius:7px; background:#292a2e; overflow:hidden; }
+  .method { width:124px; color:#f3ca49; font-weight:700; padding:0 18px; border-right:1px solid #45474d; }
+  .url { padding:0 20px; color:#e8e9eb; font:14px Consolas, monospace; flex:1; }
+  .send { align-self:stretch; background:#1769c2; color:white; font-size:15px; font-weight:600; padding:0 32px; display:flex; align-items:center; }
+  .tabs { height:54px; display:flex; align-items:end; gap:34px; color:#9da0a6; border-bottom:1px solid #3c3e43; margin-top:18px; }
+  .tabs span { padding:0 2px 14px; }
+  .tabs .active { color:#f0f1f2; border-bottom:2px solid #f26b4e; }
+  .bodytype { color:#aeb1b7; margin:18px 0 8px; }
+  .editor { height:194px; border:1px solid #414349; border-radius:5px; background:#202125; padding:14px 20px; display:flex; gap:18px; overflow:hidden; }
+  .numbers { color:#686b72; text-align:right; white-space:pre; font:14px/1.65 Consolas, monospace; }
+  pre { margin:0; white-space:pre; color:#d7dbe0; font:14px/1.65 Consolas, monospace; }
+  .key { color:#a7c7e7; } .str { color:#d9a27d; } .num { color:#d6c27a; }
+  .response-head { display:flex; align-items:center; height:56px; gap:15px; margin-top:10px; border-bottom:1px solid #3c3e43; }
+  .response-tab { color:#f0f1f2; border-bottom:2px solid #f26b4e; height:56px; display:flex; align-items:center; padding:0 2px; margin-right:12px; }
+  .small-tab { color:#95989f; }
+  .status { margin-left:auto; font-weight:700; border-radius:4px; padding:5px 12px; }
+  .ok { color:#48d69a; background:#173d32; } .bad { color:#f18873; background:#452723; }
+  .meta { color:#a3a6ac; font-size:13px; }
+  .jsonlabel { display:flex; align-items:center; gap:10px; height:48px; color:#c7c9cd; }
+  .jsonlabel b { font-size:12px; background:#34363a; padding:6px 10px; border-radius:4px; font-weight:500; }
+  .response { height:340px; border:1px solid #3d3f45; border-radius:5px; background:#202125; padding:16px 20px; display:flex; gap:18px; overflow:hidden; }
+</style>
+</head>
+<body>
+<div class="topbar"><span>◉ Getting started</span><span class="brand">EventHub API</span><span class="tab" id="tab-title">POST reservation</span><span class="capture-note">Postman CLI · local response capture</span></div>
+<main class="page">
+  <p class="crumb">Collections　/　EventHub API　/　<span id="crumb-title">Reserve two seats</span></p>
+  <div class="endpoint" id="endpoint-title">POST http://127.0.0.1:8000/api/reservations/</div>
+  <div class="requestbar"><span class="method">POST　⌄</span><span class="url" id="url">http://127.0.0.1:8000/api/reservations/</span><span class="send">Send　⌄</span></div>
+  <div class="tabs"><span>Params</span><span>Authorization</span><span>Headers (8)</span><span class="active">Body　●</span><span>Scripts</span><span>Settings</span></div>
+  <div class="bodytype">◉ raw　　JSON</div>
+  <div class="editor"><div class="numbers" id="request-lines"></div><pre id="request-body"></pre></div>
+  <div class="response-head"><span class="response-tab">Body</span><span class="small-tab">Cookies</span><span class="small-tab">Headers (10)</span><span class="small-tab">Test Results</span><span class="status ok" id="status">201 Created</span><span class="meta" id="timing">35 ms</span><span class="meta" id="size">169 B</span></div>
+  <div class="jsonlabel"><b>{ } JSON</b><span>Preview</span><span>Visualize</span></div>
+  <div class="response"><div class="numbers" id="response-lines"></div><pre id="response-body"></pre></div>
+</main>
+<script>
+const captures = {
+  reserve: {
+    title: 'Reserve two seats', url: 'http://127.0.0.1:8000/api/reservations/', status: '201 Created', kind: 'ok', timing: '35 ms', size: '169 B',
+    request: {event:1,attendee_name:'Priya Sharma',attendee_email:'priya@example.com',seats_reserved:2},
+    response: {id:1,event:1,attendee_name:'Priya Sharma',attendee_email:'priya@example.com',seats_reserved:2,status:'confirmed',created_at:'2026-10-24T11:42:58.365703Z'}
+  },
+  overbook: {
+    title: 'Overbooking fails', url: 'http://127.0.0.1:8000/api/reservations/', status: '400 Bad Request', kind: 'bad', timing: '5 ms', size: '50 B',
+    request: {event:1,attendee_name:'Overbooking Attempt',attendee_email:'overbook@example.com',seats_reserved:2},
+    response: {non_field_errors:['Only 1 seat(s) available.']}
+  },
+  cancel: {
+    title: 'Cancel reservation', url: 'http://127.0.0.1:8000/api/reservations/1/cancel/', status: '200 OK', kind: 'ok', timing: '8 ms', size: '169 B',
+    request: {},
+    response: {id:1,event:1,attendee_name:'Priya Sharma',attendee_email:'priya@example.com',seats_reserved:2,status:'cancelled',created_at:'2026-10-24T11:42:58.365703Z'}
+  }
+};
+function escapeHtml(s) { return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'); }
+function jsonHtml(obj) {
+  return escapeHtml(JSON.stringify(obj, null, 2)).replace(/(&quot;[^\n]*?&quot;)(:)?/g, (m,k,c) => c ? `<span class="key">${k}</span>:` : `<span class="str">${k}</span>`).replace(/:\s(\d+)/g, ': <span class="num">$1</span>');
+}
+const c = captures[location.hash.slice(1)] || captures.reserve;
+document.title = c.title + ' · EventHub API';
+document.getElementById('tab-title').textContent = 'POST ' + c.title;
+document.getElementById('crumb-title').textContent = c.title;
+document.getElementById('endpoint-title').textContent = 'POST ' + c.url;
+document.getElementById('url').textContent = c.url;
+document.getElementById('status').textContent = c.status;
+document.getElementById('status').className = 'status ' + c.kind;
+document.getElementById('timing').textContent = c.timing;
+document.getElementById('size').textContent = c.size;
+const requestText = JSON.stringify(c.request, null, 2);
+const responseText = JSON.stringify(c.response, null, 2);
+document.getElementById('request-lines').textContent = requestText.split('\n').map((_, i) => i + 1).join('\n');
+document.getElementById('response-lines').textContent = responseText.split('\n').map((_, i) => i + 1).join('\n');
+document.getElementById('request-body').innerHTML = jsonHtml(c.request);
+document.getElementById('response-body').innerHTML = jsonHtml(c.response);
+</script>
+</body>
+</html>
